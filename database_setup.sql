@@ -1,6 +1,4 @@
 -- SafeCampus Database Setup Script
--- Run this entire script in Supabase SQL Editor
--- This will create all tables, policies, triggers, and seed data
 
 -- ============================================================================
 -- 1. CREATE TABLES
