@@ -67,4 +67,3 @@ enum TimelineStatus {
   inProgress,
   pending,
 }
-
