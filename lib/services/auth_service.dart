@@ -239,4 +239,3 @@ class AuthService {
     await _storage.setString('user_role', user.role.name);
   }
 }
-
