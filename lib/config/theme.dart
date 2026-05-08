@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+// Student frontend update by Fadila Mohammed
+
+  // This widget is the root of your application.
 
 class AppColors {
   // Primary colors
