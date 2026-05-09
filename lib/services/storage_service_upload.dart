@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -13,15 +14,19 @@ class StorageServiceUpload {
     String? fileName,
     Map<String, String>? metadata,
   }) async {
+    developer.log('📤 UPLOADING FILE TO STORAGE', name: 'StorageServiceUpload');
+    developer.log('🪣 Bucket: $bucket', name: 'StorageServiceUpload');
+    developer.log('📁 File Path: $filePath', name: 'StorageServiceUpload');
 
     try {
       final file = File(filePath);
       if (!await file.exists()) {
+        developer.log('❌ File does not exist: $filePath', name: 'StorageServiceUpload');
         return null;
       }
 
       // Generate unique filename if not provided
-      final uniqueFileName = fileName ??
+      final uniqueFileName = fileName ?? 
           '${DateTime.now().millisecondsSinceEpoch}_${path.basename(filePath)}';
 
       // Read file bytes
@@ -31,22 +36,25 @@ class StorageServiceUpload {
       final response = await _supabase.storage
           .from(bucket)
           .uploadBinary(
-        uniqueFileName,
-        fileBytes,
-        fileOptions: FileOptions(
-          contentType: _getContentType(filePath),
-          metadata: metadata,
-        ),
-      );
+            uniqueFileName,
+            fileBytes,
+            fileOptions: FileOptions(
+              contentType: _getContentType(filePath),
+              metadata: metadata,
+            ),
+          );
 
+      developer.log('✅ File uploaded: $response', name: 'StorageServiceUpload');
 
       // Get public URL
       final publicUrl = _supabase.storage
           .from(bucket)
           .getPublicUrl(uniqueFileName);
 
+      developer.log('✅ Public URL: $publicUrl', name: 'StorageServiceUpload');
       return publicUrl;
     } catch (e) {
+      developer.log('❌ Error uploading file: $e', name: 'StorageServiceUpload');
       return null;
     }
   }
@@ -56,7 +64,8 @@ class StorageServiceUpload {
     required String incidentId,
     required String filePath,
   }) async {
-
+    developer.log('📸 UPLOADING INCIDENT PHOTO', name: 'StorageServiceUpload');
+    
     final currentUser = _supabase.auth.currentUser;
     final fileName = 'incidents/${incidentId}/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
@@ -77,7 +86,8 @@ class StorageServiceUpload {
     required String userId,
     required String filePath,
   }) async {
-
+    developer.log('👤 UPLOADING PROFILE PHOTO', name: 'StorageServiceUpload');
+    
     final fileName = 'profiles/$userId/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
     return await uploadFile(
@@ -96,14 +106,19 @@ class StorageServiceUpload {
     required String bucket,
     required String fileName,
   }) async {
+    developer.log('🗑️ DELETING FILE FROM STORAGE', name: 'StorageServiceUpload');
+    developer.log('🪣 Bucket: $bucket', name: 'StorageServiceUpload');
+    developer.log('📁 File: $fileName', name: 'StorageServiceUpload');
 
     try {
       await _supabase.storage
           .from(bucket)
           .remove([fileName]);
 
+      developer.log('✅ File deleted successfully', name: 'StorageServiceUpload');
       return true;
     } catch (e) {
+      developer.log('❌ Error deleting file: $e', name: 'StorageServiceUpload');
       return false;
     }
   }
@@ -141,6 +156,7 @@ class StorageServiceUpload {
       await file.writeAsBytes(bytes);
       return file.path;
     } catch (e) {
+      developer.log('❌ Error creating temp file: $e', name: 'StorageServiceUpload');
       return null;
     }
   }

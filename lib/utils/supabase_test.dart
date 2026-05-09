@@ -125,7 +125,7 @@ class SupabaseTest {
   /// Run all tests and print results
   static Future<void> runTests() async {
     print('Running Supabase connection tests...\n');
-
+    
     try {
       final results = await testConnection();
       print(formatResults(results));

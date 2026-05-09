@@ -46,10 +46,10 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
 
   Future<void> _loadContacts() async {
     setState(() => _isLoading = true);
-
+    
     // Load campus emergency contacts
     final dbContacts = await _contactService.getEmergencyContacts();
-
+    
     // Load personal emergency contacts
     final currentUser = _supabase.auth.currentUser;
     if (currentUser != null) {
@@ -60,11 +60,11 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
           role: contact.relationship ?? 'Personal Contact',
           phone: contact.phone,
           icon: Icons.person,
-          color: AppColors.accent,
+      color: AppColors.accent,
         );
       }).toList();
     }
-
+    
     setState(() {
       contacts = dbContacts.map((contact) {
         return EmergencyContact(
@@ -112,7 +112,7 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
     // Remove any non-digit characters except + for international numbers
     final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
     final phoneUri = Uri.parse('tel:$cleanPhone');
-
+    
     try {
       if (await canLaunchUrl(phoneUri)) {
         await launchUrl(phoneUri);
@@ -120,26 +120,26 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
+        content: Text(
                 'Cannot make phone call. Please dial $phone manually.',
                 style: GoogleFonts.inter(fontWeight: FontWeight.w600),
               ),
               backgroundColor: AppColors.critical,
-            ),
+              ),
           );
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
               'Error making call: $e',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-            ),
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
             backgroundColor: AppColors.critical,
-          ),
-        );
+                ),
+              );
       }
     }
   }
@@ -217,36 +217,36 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
             ...personalContacts.map((contact) => _buildContactCard(context, contact)),
             const SizedBox(height: 24),
           ],
-
+          
           // Campus Emergency Contacts Section
           if (contacts.isNotEmpty) ...[
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.critical.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.phone_in_talk,
-                    color: AppColors.critical,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Campus Emergency Contacts',
-                  style: GoogleFonts.outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.critical.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.phone_in_talk,
+                color: AppColors.critical,
+                size: 20,
+              ),
             ),
+            const SizedBox(width: 12),
+            Text(
+                  'Campus Emergency Contacts',
+              style: GoogleFonts.outfit(
+                    fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
             const SizedBox(height: 12),
-            ...contacts.map((contact) => _buildContactCard(context, contact)),
+        ...contacts.map((contact) => _buildContactCard(context, contact)),
           ],
         ],
       ],
@@ -344,3 +344,4 @@ class _EmergencyContactsState extends State<EmergencyContacts> {
     );
   }
 }
+

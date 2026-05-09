@@ -25,7 +25,7 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
   bool _isAnonymous = false;
   List<String> _photosPaths = [];
   bool _isSubmitting = false;
-
+  
   final _incidentService = IncidentService();
 
   final List<IncidentCategory> _categories = [
@@ -66,9 +66,9 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
 
   Future<void> _handleSubmit() async {
     if (_isSubmitting) return;
-
+    
     setState(() => _isSubmitting = true);
-
+    
     try {
       // Create incident in database
       final incidentId = await _incidentService.createIncident(
@@ -79,7 +79,7 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
         description: _descriptionController.text,
         isAnonymous: _isAnonymous,
       );
-
+      
       if (incidentId != null) {
         // Upload photos if any
         for (final photoPath in _photosPaths) {
@@ -89,7 +89,7 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
             filePath: photoPath,
           );
         }
-
+        
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -101,17 +101,17 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
             ),
           );
         }
-
+        
         // Reset form
-        setState(() {
-          _currentStep = 0;
-          _selectedCategory = '';
-          _descriptionController.clear();
-          _locationController.clear();
-          _isAnonymous = false;
-          _photosPaths = [];
-        });
-
+    setState(() {
+      _currentStep = 0;
+      _selectedCategory = '';
+      _descriptionController.clear();
+      _locationController.clear();
+      _isAnonymous = false;
+      _photosPaths = [];
+    });
+        
         widget.onSubmit?.call();
       } else {
         throw Exception('Failed to create incident');
@@ -134,7 +134,7 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
       }
     }
   }
-
+  
   String _determineSeverity() {
     // Determine severity based on category
     switch (_selectedCategory.toLowerCase()) {
@@ -249,11 +249,11 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
                   ),
                   boxShadow: isSelected
                       ? [
-                    BoxShadow(
-                      color: AppColors.accent.withOpacity(0.3),
-                      blurRadius: 20,
-                    ),
-                  ]
+                          BoxShadow(
+                            color: AppColors.accent.withOpacity(0.3),
+                            blurRadius: 20,
+                          ),
+                        ]
                       : [],
                 ),
                 child: Column(
@@ -413,8 +413,8 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
             children: [
               _buildReviewRow('Type', _selectedCategory.toUpperCase()),
               const Divider(height: 24, color: AppColors.border),
-              _buildReviewRow('Location', _locationController.text.isEmpty
-                  ? 'Not specified'
+              _buildReviewRow('Location', _locationController.text.isEmpty 
+                  ? 'Not specified' 
                   : _locationController.text),
               const Divider(height: 24, color: AppColors.border),
               _buildReviewRow('Anonymous', _isAnonymous ? 'Yes' : 'No'),
@@ -487,19 +487,19 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
   Widget _buildNavigationButtons() {
     // Determine if the current step is valid
     bool canProceed = false;
-
+    
     if (_currentStep == 0) {
       // Step 0: Category must be selected
       canProceed = _selectedCategory.isNotEmpty;
     } else if (_currentStep == 1) {
       // Step 1: Description and location must be filled
       canProceed = _descriptionController.text.trim().isNotEmpty &&
-          _locationController.text.trim().isNotEmpty;
+                   _locationController.text.trim().isNotEmpty;
     } else if (_currentStep == 2) {
       // Step 2: Always can submit (review step)
       canProceed = true;
     }
-
+    
     return Row(
       children: [
         if (_currentStep > 0)
@@ -516,8 +516,8 @@ class _IncidentComposerScreenState extends State<IncidentComposerScreen> {
                 ? (_currentStep == 2 ? _handleSubmit : _nextStep)
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _currentStep == 2
-                  ? AppColors.success
+              backgroundColor: _currentStep == 2 
+                  ? AppColors.success 
                   : AppColors.secondary,
             ),
             child: Text(_currentStep == 2 ? 'Submit' : 'Next'),

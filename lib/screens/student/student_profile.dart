@@ -12,7 +12,7 @@ import '../auth/login_screen.dart';
 
 class StudentProfile extends StatefulWidget {
   final models.User? user;
-
+  
   const StudentProfile({super.key, this.user});
 
   @override
@@ -24,13 +24,13 @@ class _StudentProfileState extends State<StudentProfile> {
   bool _locationSharingEnabled = true;
   bool _buddyAlertsEnabled = true;
   String _safetyRadius = '1.0'; // km
-
+  
   final _userService = UserService();
   final _incidentService = IncidentService();
   final _authService = AuthService();
   final _personalContactService = PersonalContactService();
   final _imagePicker = ImagePicker();
-
+  
   models.User? _currentUser;
   int _incidentCount = 0;
   bool _isLoading = true;
@@ -42,37 +42,37 @@ class _StudentProfileState extends State<StudentProfile> {
     super.initState();
     _loadUserData();
   }
-
+  
   Future<void> _loadUserData() async {
     setState(() => _isLoading = true);
-
+    
     // Use passed user or fetch current user
     _currentUser = widget.user ?? await _userService.getCurrentUser();
-
+    
     // Load user's incident count and personal contacts
     if (_currentUser != null) {
       final incidents = await _incidentService.getUserIncidents(_currentUser!.id);
       _incidentCount = incidents.length;
-
+      
       // Load personal contacts
       _personalContacts = await _personalContactService.getUserContacts(_currentUser!.id);
     }
-
+    
     setState(() => _isLoading = false);
   }
-
+  
   Future<void> _showEditProfileDialog() async {
     final nameController = TextEditingController(text: _currentUser?.name);
     final studentIdController = TextEditingController(text: _currentUser?.studentId);
     final phoneController = TextEditingController(text: _currentUser?.phone);
     final residenceController = TextEditingController(text: _currentUser?.residence);
-
+    
     // Store values before dialog closes
     String? newName;
     String? newStudentId;
     String? newPhone;
     String? newResidence;
-
+    
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -178,13 +178,13 @@ class _StudentProfileState extends State<StudentProfile> {
         ],
       ),
     );
-
+    
     // Dispose controllers immediately after dialog closes
     nameController.dispose();
     studentIdController.dispose();
     phoneController.dispose();
     residenceController.dispose();
-
+    
     // Use stored values for update
     if (result == true && _currentUser != null && newName != null) {
       final success = await _userService.updateUserProfile(
@@ -194,7 +194,7 @@ class _StudentProfileState extends State<StudentProfile> {
         phone: newPhone,
         residence: newResidence,
       );
-
+      
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -214,12 +214,12 @@ class _StudentProfileState extends State<StudentProfile> {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final relationshipController = TextEditingController();
-
+    
     // Store values before dialog closes
     String? contactName;
     String? contactPhone;
     String? contactRelationship;
-
+    
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -306,7 +306,7 @@ class _StudentProfileState extends State<StudentProfile> {
               nameController.dispose();
               phoneController.dispose();
               relationshipController.dispose();
-
+              
               Navigator.pop(context, false);
             },
             child: Text('Cancel', style: GoogleFonts.inter(color: AppColors.foregroundLight)),
@@ -317,12 +317,12 @@ class _StudentProfileState extends State<StudentProfile> {
               contactName = nameController.text;
               contactPhone = phoneController.text;
               contactRelationship = relationshipController.text;
-
+              
               // Dispose controllers before closing dialog
               nameController.dispose();
               phoneController.dispose();
               relationshipController.dispose();
-
+              
               Navigator.pop(context, true);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.secondary),
@@ -331,7 +331,7 @@ class _StudentProfileState extends State<StudentProfile> {
         ],
       ),
     );
-
+    
     // Validate and show message
     if (result == true && contactName != null && contactPhone != null) {
       if (contactName!.isEmpty || contactPhone!.isEmpty) {
@@ -348,7 +348,7 @@ class _StudentProfileState extends State<StudentProfile> {
         }
         return;
       }
-
+      
       // Save to database
       if (_currentUser != null) {
         final contactId = await _personalContactService.addContact(
@@ -357,7 +357,7 @@ class _StudentProfileState extends State<StudentProfile> {
           phone: contactPhone!,
           relationship: contactRelationship?.isNotEmpty == true ? contactRelationship : null,
         );
-
+        
         if (mounted) {
           if (contactId != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -507,13 +507,13 @@ class _StudentProfileState extends State<StudentProfile> {
         ],
       ),
     );
-
+    
     if (confirm == true) {
       await _authService.logout();
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false,
+          (route) => false,
         );
       }
     }
@@ -526,7 +526,7 @@ class _StudentProfileState extends State<StudentProfile> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -615,32 +615,32 @@ class _StudentProfileState extends State<StudentProfile> {
                     child: Center(
                       child: _currentUser?.profileImage != null
                           ? ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.network(
-                          _currentUser!.profileImage!,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Text(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image.network(
+                                _currentUser!.profileImage!,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Text(
+                                    _currentUser?.name.substring(0, 1).toUpperCase() ?? 'S',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 48,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.secondary,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : Text(
                               _currentUser?.name.substring(0, 1).toUpperCase() ?? 'S',
                               style: GoogleFonts.outfit(
                                 fontSize: 48,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.secondary,
                               ),
-                            );
-                          },
-                        ),
-                      )
-                          : Text(
-                        _currentUser?.name.substring(0, 1).toUpperCase() ?? 'S',
-                        style: GoogleFonts.outfit(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.secondary,
-                        ),
-                      ),
+                            ),
                     ),
                   ),
                   if (_currentUser?.profileImage != null)
@@ -658,21 +658,21 @@ class _StudentProfileState extends State<StudentProfile> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Text(
+                    ),
+                    child: Center(
+                      child: Text(
                                 _currentUser?.name.substring(0, 1).toUpperCase() ?? 'S',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.secondary,
-                                ),
-                              ),
+                        style: GoogleFonts.outfit(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.secondary,
+                        ),
+                      ),
                             ),
                           );
                         },
-                      ),
                     ),
+                  ),
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -687,13 +687,13 @@ class _StudentProfileState extends State<StudentProfile> {
                         ),
                         child: _isUploadingPhoto
                             ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
                             : const Icon(
                           Icons.camera_alt,
                           color: Colors.white,
@@ -723,11 +723,11 @@ class _StudentProfileState extends State<StudentProfile> {
               ),
               const SizedBox(height: 4),
               if (_currentUser?.studentId != null)
-                Text(
+              Text(
                   'Student ID: ${_currentUser!.studentId}',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.7),
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: Colors.white.withOpacity(0.7),
                   ),
                 ),
               const SizedBox(height: 16),
@@ -752,15 +752,15 @@ class _StudentProfileState extends State<StudentProfile> {
     // Calculate safety score based on incidents
     int safetyScore = 100 - (_incidentCount * 5).clamp(0, 30);
     safetyScore = safetyScore.clamp(0, 100);
-
+    
     Color scoreColor = safetyScore >= 90 ? AppColors.success :
-    safetyScore >= 75 ? AppColors.secondary :
-    safetyScore >= 60 ? AppColors.warning : AppColors.critical;
-
+                       safetyScore >= 75 ? AppColors.secondary :
+                       safetyScore >= 60 ? AppColors.warning : AppColors.critical;
+    
     String scoreMessage = safetyScore >= 90 ? 'Excellent safety record!' :
-    safetyScore >= 75 ? 'Good safety practices' :
-    safetyScore >= 60 ? 'Fair - be more cautious' : 'Needs improvement';
-
+                          safetyScore >= 75 ? 'Good safety practices' :
+                          safetyScore >= 60 ? 'Fair - be more cautious' : 'Needs improvement';
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -951,14 +951,14 @@ class _StudentProfileState extends State<StudentProfile> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+            decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: contact.isPrimary ? AppColors.accent : AppColors.border,
           width: contact.isPrimary ? 2 : 1,
         ),
-      ),
+            ),
       child: Row(
         children: [
           Container(
@@ -983,9 +983,9 @@ class _StudentProfileState extends State<StudentProfile> {
                   children: [
                     Text(
                       contact.name,
-                      style: GoogleFonts.inter(
+            style: GoogleFonts.inter(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
@@ -1023,7 +1023,7 @@ class _StudentProfileState extends State<StudentProfile> {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       color: AppColors.foregroundLight.withOpacity(0.7),
-                    ),
+          ),
                   ),
               ],
             ),
@@ -1058,7 +1058,7 @@ class _StudentProfileState extends State<StudentProfile> {
                     ],
                   ),
                 );
-
+                
                 if (confirm == true) {
                   final success = await _personalContactService.deleteContact(contact.id);
                   if (mounted) {
@@ -1113,8 +1113,8 @@ class _StudentProfileState extends State<StudentProfile> {
                   'Delete',
                   style: GoogleFonts.inter(color: AppColors.critical),
                 ),
-              ),
-            ],
+        ),
+      ],
             color: AppColors.surface,
           ),
         ],
@@ -1131,13 +1131,13 @@ class _StudentProfileState extends State<StudentProfile> {
           'Push Notifications',
           'Receive alerts about campus incidents',
           _notificationsEnabled,
-              (value) => setState(() => _notificationsEnabled = value),
+          (value) => setState(() => _notificationsEnabled = value),
         ),
         _buildSwitchRow(
           'Buddy Alerts',
           'Get notified when buddies need help',
           _buddyAlertsEnabled,
-              (value) => setState(() => _buddyAlertsEnabled = value),
+          (value) => setState(() => _buddyAlertsEnabled = value),
         ),
         _buildInfoRow(
           'Alert Radius',
@@ -1161,7 +1161,7 @@ class _StudentProfileState extends State<StudentProfile> {
           'Location Sharing',
           'Share location with buddies',
           _locationSharingEnabled,
-              (value) => setState(() => _locationSharingEnabled = value),
+          (value) => setState(() => _locationSharingEnabled = value),
         ),
         _buildInfoRow('Default Report Mode', 'Anonymous', Icons.visibility_off),
         _buildInfoRow('Data Retention', '90 days', Icons.timer),
