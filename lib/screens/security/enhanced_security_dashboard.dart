@@ -12,9 +12,6 @@ import '../../services/auth_service.dart';
 import '../../services/alert_service.dart';
 import '../../services/ai_service.dart';
 import 'security_profile.dart';
-// Student frontend update by Fadila Mohammed
-
-  // This widget is the root of your application.
 
 class EnhancedSecurityDashboard extends StatefulWidget {
   const EnhancedSecurityDashboard({super.key});

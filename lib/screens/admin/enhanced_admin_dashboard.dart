@@ -8,9 +8,6 @@ import '../../services/report_service.dart';
 import '../../services/ai_service.dart';
 import '../../models/user.dart' as models;
 import '../auth/login_screen.dart';
-// Student frontend update by Fadila Mohammed
-
-  // This widget is the root of your application.
 
 class EnhancedAdminDashboard extends StatefulWidget {
   const EnhancedAdminDashboard({super.key});

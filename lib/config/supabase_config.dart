@@ -1,7 +1,5 @@
 library;
-// Student frontend update by Fadila Mohammed
 
-  // This widget is the root of your application.
 class SupabaseConfig {
 
   static const String supabaseUrl = String.fromEnvironment(

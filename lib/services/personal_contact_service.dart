@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 
 class PersonalContact {
   final String id;
@@ -51,7 +52,11 @@ class PersonalContact {
 class PersonalContactService {
   final _supabase = Supabase.instance.client;
 
+  // Get all personal contacts for a user
   Future<List<PersonalContact>> getUserContacts(String userId) async {
+    developer.log('📇 FETCHING PERSONAL CONTACTS', name: 'PersonalContactService');
+    developer.log('👤 User ID: $userId', name: 'PersonalContactService');
+
     try {
       final response = await _supabase
           .from('personal_contacts')
@@ -60,12 +65,18 @@ class PersonalContactService {
           .order('is_primary', ascending: false)
           .order('created_at', ascending: false);
 
-      return (response as List).map((contact) => PersonalContact.fromJson(contact)).toList();
+      developer.log('✅ Fetched ${response.length} contacts', name: 'PersonalContactService');
+
+      return (response as List).map((contact) {
+        return PersonalContact.fromJson(contact);
+      }).toList();
     } catch (e) {
+      developer.log('❌ Error fetching contacts: $e', name: 'PersonalContactService');
       return [];
     }
   }
 
+  // Add a new personal contact
   Future<String?> addContact({
     required String userId,
     required String name,
@@ -73,7 +84,13 @@ class PersonalContactService {
     String? relationship,
     bool isPrimary = false,
   }) async {
+    developer.log('➕ ADDING PERSONAL CONTACT', name: 'PersonalContactService');
+    developer.log('👤 User ID: $userId', name: 'PersonalContactService');
+    developer.log('📇 Name: $name', name: 'PersonalContactService');
+    developer.log('📞 Phone: $phone', name: 'PersonalContactService');
+
     try {
+      // If this is set as primary, unset other primary contacts
       if (isPrimary) {
         await _supabase
             .from('personal_contacts')
@@ -85,23 +102,27 @@ class PersonalContactService {
       final response = await _supabase
           .from('personal_contacts')
           .insert({
-        'user_id': userId,
-        'name': name,
-        'phone': phone,
-        'relationship': relationship,
-        'is_primary': isPrimary,
-        'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      })
+            'user_id': userId,
+            'name': name,
+            'phone': phone,
+            'relationship': relationship,
+            'is_primary': isPrimary,
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          })
           .select('id')
           .single();
 
-      return response['id'];
+      final contactId = response['id'];
+      developer.log('✅ Contact added with ID: $contactId', name: 'PersonalContactService');
+      return contactId;
     } catch (e) {
+      developer.log('❌ Error adding contact: $e', name: 'PersonalContactService');
       return null;
     }
   }
 
+  // Update a personal contact
   Future<bool> updateContact({
     required String contactId,
     String? name,
@@ -109,6 +130,9 @@ class PersonalContactService {
     String? relationship,
     bool? isPrimary,
   }) async {
+    developer.log('✏️ UPDATING PERSONAL CONTACT', name: 'PersonalContactService');
+    developer.log('🆔 Contact ID: $contactId', name: 'PersonalContactService');
+
     try {
       final updates = <String, dynamic>{};
       if (name != null) updates['name'] = name;
@@ -116,12 +140,15 @@ class PersonalContactService {
       if (relationship != null) updates['relationship'] = relationship;
       if (isPrimary != null) {
         updates['is_primary'] = isPrimary;
+        
+        // If setting as primary, unset other primary contacts
         if (isPrimary) {
           final contact = await _supabase
               .from('personal_contacts')
               .select('user_id')
               .eq('id', contactId)
               .single();
+          
           await _supabase
               .from('personal_contacts')
               .update({'is_primary': false})
@@ -132,23 +159,42 @@ class PersonalContactService {
       }
       updates['updated_at'] = DateTime.now().toIso8601String();
 
-      await _supabase.from('personal_contacts').update(updates).eq('id', contactId);
+      await _supabase
+          .from('personal_contacts')
+          .update(updates)
+          .eq('id', contactId);
+
+      developer.log('✅ Contact updated successfully', name: 'PersonalContactService');
       return true;
     } catch (e) {
+      developer.log('❌ Error updating contact: $e', name: 'PersonalContactService');
       return false;
     }
   }
 
+  // Delete a personal contact
   Future<bool> deleteContact(String contactId) async {
+    developer.log('🗑️ DELETING PERSONAL CONTACT', name: 'PersonalContactService');
+    developer.log('🆔 Contact ID: $contactId', name: 'PersonalContactService');
+
     try {
-      await _supabase.from('personal_contacts').delete().eq('id', contactId);
+      await _supabase
+          .from('personal_contacts')
+          .delete()
+          .eq('id', contactId);
+
+      developer.log('✅ Contact deleted successfully', name: 'PersonalContactService');
       return true;
     } catch (e) {
+      developer.log('❌ Error deleting contact: $e', name: 'PersonalContactService');
       return false;
     }
   }
 
+  // Get primary contact
   Future<PersonalContact?> getPrimaryContact(String userId) async {
+    developer.log('⭐ FETCHING PRIMARY CONTACT', name: 'PersonalContactService');
+
     try {
       final response = await _supabase
           .from('personal_contacts')
@@ -158,11 +204,17 @@ class PersonalContactService {
           .limit(1)
           .maybeSingle();
 
-      if (response == null) return null;
+      if (response == null) {
+        developer.log('ℹ️ No primary contact found', name: 'PersonalContactService');
+        return null;
+      }
+
       return PersonalContact.fromJson(response);
     } catch (e) {
+      developer.log('❌ Error fetching primary contact: $e', name: 'PersonalContactService');
       return null;
     }
   }
 }
+
 
