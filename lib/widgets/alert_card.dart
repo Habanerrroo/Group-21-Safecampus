@@ -51,8 +51,8 @@ class _AlertCardState extends State<AlertCard> {
     final color = _getTypeColor();
     final icon = _getTypeIcon();
     // Use muted border color for read alerts
-    final borderColor = widget.alert.isRead
-        ? AppColors.border
+    final borderColor = widget.alert.isRead 
+        ? AppColors.border 
         : color;
 
     return GestureDetector(
@@ -64,19 +64,19 @@ class _AlertCardState extends State<AlertCard> {
         duration: const Duration(milliseconds: 300),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: widget.alert.isRead
-              ? AppColors.surface
+          color: widget.alert.isRead 
+              ? AppColors.surface 
               : color.withOpacity(0.15),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor, width: 2),
           boxShadow: isExpanded
               ? [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 20,
-              spreadRadius: 0,
-            ),
-          ]
+                  BoxShadow(
+                    color: color.withOpacity(0.3),
+                    blurRadius: 20,
+                    spreadRadius: 0,
+                  ),
+                ]
               : [],
         ),
         child: Column(

@@ -8,9 +8,6 @@ import '../../services/report_service.dart';
 import '../../services/ai_service.dart';
 import '../../models/user.dart' as models;
 import '../auth/login_screen.dart';
-// Student frontend update by Fadila Mohammed
-
-  // This widget is the root of your application.
 
 class EnhancedAdminDashboard extends StatefulWidget {
   const EnhancedAdminDashboard({super.key});
@@ -652,7 +649,7 @@ class _EnhancedAdminDashboardState extends State<EnhancedAdminDashboard>
                     final activity = _recentActivity[index];
                     final timestamp = activity['timestamp'] as DateTime;
                     final timeAgo = _formatTimeAgo(timestamp);
-
+                    
               return ListTile(
                       leading: Icon(_getActivityIcon(activity['icon'] as String),
                     color: AppColors.secondary, size: 24),
@@ -922,7 +919,7 @@ class _EnhancedAdminDashboardState extends State<EnhancedAdminDashboard>
             itemBuilder: (context, index) {
                     final user = _users[index];
                     final roleStr = user.role.name[0].toUpperCase() + user.role.name.substring(1);
-
+                    
               return ListTile(
                 leading: CircleAvatar(
                   backgroundColor: AppColors.secondary.withValues(alpha: 0.2),
@@ -1390,7 +1387,7 @@ class _EnhancedAdminDashboardState extends State<EnhancedAdminDashboard>
   Widget _buildCategoryBreakdown() {
     final typeBreakdown = _analytics['typeBreakdown'] as Map<String, dynamic>? ?? {};
     final totalIncidents = _analytics['totalIncidents'] as int? ?? 1;
-
+    
     final categories = typeBreakdown.entries.map((entry) {
       final count = entry.value as int;
       final percentage = totalIncidents > 0 ? count / totalIncidents : 0.0;

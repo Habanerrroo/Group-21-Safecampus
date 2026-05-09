@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 
 class ReportService {
   final _supabase = Supabase.instance.client;
@@ -8,6 +9,7 @@ class ReportService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    developer.log('📄 GENERATING INCIDENT SUMMARY REPORT', name: 'ReportService');
 
     try {
       var query = _supabase.from('incidents').select();
@@ -66,6 +68,7 @@ class ReportService {
           ? (totalResponseTime / resolvedWithTime).toStringAsFixed(1)
           : 'N/A';
 
+      developer.log('✅ Report generated successfully', name: 'ReportService');
 
       return {
         'reportType': 'incident_summary',
@@ -90,6 +93,7 @@ class ReportService {
         'generatedAt': DateTime.now().toIso8601String(),
       };
     } catch (e) {
+      developer.log('❌ Error generating report: $e', name: 'ReportService');
       rethrow;
     }
   }
@@ -99,6 +103,7 @@ class ReportService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    developer.log('📄 GENERATING USER ACTIVITY REPORT', name: 'ReportService');
 
     try {
       // Get users
@@ -143,6 +148,7 @@ class ReportService {
       final totalReports = incidents.length;
       final avgReportsPerUser = totalUsers > 0 ? (totalReports / totalUsers).toStringAsFixed(1) : '0.0';
 
+      developer.log('✅ User activity report generated', name: 'ReportService');
 
       return {
         'reportType': 'user_activity',
@@ -160,6 +166,7 @@ class ReportService {
         'generatedAt': DateTime.now().toIso8601String(),
       };
     } catch (e) {
+      developer.log('❌ Error generating user activity report: $e', name: 'ReportService');
       rethrow;
     }
   }
@@ -169,6 +176,7 @@ class ReportService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    developer.log('📄 GENERATING RESPONSE TIME REPORT', name: 'ReportService');
 
     try {
       var query = _supabase
@@ -243,6 +251,7 @@ class ReportService {
         }
       });
 
+      developer.log('✅ Response time report generated', name: 'ReportService');
 
       return {
         'reportType': 'response_time',
@@ -263,6 +272,7 @@ class ReportService {
         'generatedAt': DateTime.now().toIso8601String(),
       };
     } catch (e) {
+      developer.log('❌ Error generating response time report: $e', name: 'ReportService');
       rethrow;
     }
   }
@@ -272,6 +282,7 @@ class ReportService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    developer.log('📄 GENERATING STAFF PERFORMANCE REPORT', name: 'ReportService');
 
     try {
       // Get security staff
@@ -301,7 +312,7 @@ class ReportService {
         final officerId = officer['id'] as String;
         final officerIncidents = incidents.where((i) => i['assigned_officer'] == officerId).toList();
         final resolvedIncidents = officerIncidents.where((i) =>
-        i['status'] == 'resolved' || i['status'] == 'closed').length;
+            i['status'] == 'resolved' || i['status'] == 'closed').length;
 
         // Calculate average response time
         double totalResponseTime = 0;
@@ -340,6 +351,7 @@ class ReportService {
         };
       }
 
+      developer.log('✅ Staff performance report generated', name: 'ReportService');
 
       return {
         'reportType': 'staff_performance',
@@ -354,7 +366,9 @@ class ReportService {
         'generatedAt': DateTime.now().toIso8601String(),
       };
     } catch (e) {
+      developer.log('❌ Error generating staff performance report: $e', name: 'ReportService');
       rethrow;
     }
   }
 }
+

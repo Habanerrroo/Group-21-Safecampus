@@ -12,9 +12,6 @@ import '../../services/auth_service.dart';
 import '../../services/alert_service.dart';
 import '../../services/ai_service.dart';
 import 'security_profile.dart';
-// Student frontend update by Fadila Mohammed
-
-  // This widget is the root of your application.
 
 class EnhancedSecurityDashboard extends StatefulWidget {
   const EnhancedSecurityDashboard({super.key});
@@ -27,13 +24,13 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Incident? _selectedIncident;
-
+  
   // Services
   final _incidentService = IncidentService();
   final _authService = AuthService();
   final _alertService = AlertService();
   final _aiService = AIService();
-
+  
   // Data
   List<Incident> _incidents = [];
   List<Incident> _myIncidents = [];
@@ -41,7 +38,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
   bool _isLoading = true;
   int _activeIncidentCount = 0;
   int _myIncidentCount = 0;
-
+  
   // Realtime subscription
   StreamSubscription? _incidentSubscription;
 
@@ -62,30 +59,30 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-
+    
     try {
       // Get current user
       _currentUser = await _authService.getCurrentUser();
-
+      
       // Get all active incidents
       final allIncidents = await _incidentService.getActiveIncidents();
-
+      
       // AI-powered prioritization
       final prioritized = await _aiService.prioritizeIncidents(allIncidents);
       _incidents = prioritized.map((p) => p['incident'] as Incident).toList();
       _activeIncidentCount = _incidents.length;
-
+      
       // Get incidents assigned to this officer
       if (_currentUser != null) {
         _myIncidents = await _incidentService.getOfficerIncidents(_currentUser!.id);
         _myIncidentCount = _myIncidents.length;
       }
-
+      
       // Select first incident if available
       if (_incidents.isNotEmpty && _selectedIncident == null) {
         _selectedIncident = _incidents.first;
       }
-
+      
     } catch (e) {
       print('[SecurityDashboard] Error loading data: $e');
     } finally {
@@ -99,18 +96,18 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
     _incidentSubscription = _incidentService.subscribeToIncidents().listen((incidents) async {
       if (mounted) {
         final activeIncidents = incidents.where((i) => i.status != 'resolved' && i.status != 'closed').toList();
-
+        
         // AI-powered prioritization
         final prioritized = await _aiService.prioritizeIncidents(activeIncidents);
         final sortedIncidents = prioritized.map((p) => p['incident'] as Incident).toList();
-
+        
         setState(() {
           _incidents = sortedIncidents;
           _activeIncidentCount = _incidents.length;
-
+          
           // Update my incidents
           if (_currentUser != null) {
-            _myIncidents = sortedIncidents.where((i) =>
+            _myIncidents = sortedIncidents.where((i) => 
               i.assignedOfficer == _currentUser!.id
             ).toList();
             _myIncidentCount = _myIncidents.length;
@@ -373,7 +370,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
         child: Column(
           children: [
             _buildHeader(),
-
+            
             // Tab Bar
             Container(
               decoration: const BoxDecoration(
@@ -397,7 +394,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
                 ],
               ),
             ),
-
+            
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -416,12 +413,12 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
   }
 
   Widget _buildHeader() {
-    final initial = _currentUser?.name.isNotEmpty == true
-        ? _currentUser!.name[0].toUpperCase()
+    final initial = _currentUser?.name.isNotEmpty == true 
+        ? _currentUser!.name[0].toUpperCase() 
         : 'O';
     final name = _currentUser?.name ?? 'Officer';
     final badge = _currentUser?.studentId ?? 'Loading...';
-
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
@@ -556,7 +553,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator(color: AppColors.secondary));
     }
-
+    
     return RefreshIndicator(
       onRefresh: _refreshData,
       color: AppColors.secondary,
@@ -611,7 +608,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator(color: AppColors.secondary));
     }
-
+    
     return RefreshIndicator(
       onRefresh: _refreshData,
       color: AppColors.secondary,
@@ -685,7 +682,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
               ),
             ),
             const SizedBox(height: 20),
-
+            
             // Selected Incident Indicator
             if (_selectedIncident != null)
               Container(
@@ -781,7 +778,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
                   ],
                 ),
               ),
-
+            
             QuickActions(
               selectedIncidentId: _selectedIncident?.id,
               onConfirmArrival: () => _handleConfirmArrival(),
@@ -791,18 +788,18 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
               onResolveIncident: () => _handleResolveIncident(),
               onShareLocation: () => _showSuccessMessage('Location shared with team!'),
             ),
-
+            
             const SizedBox(height: 24),
-
+            
             if (_selectedIncident != null)
               IncidentStatusManager(
                 incidentId: _selectedIncident!.id,
                 currentStatus: _parseStatusType(_selectedIncident!.status),
                 onStatusChange: (status) => _handleStatusChange(status),
               ),
-
+            
             const SizedBox(height: 24),
-
+            
             // Broadcast Alert Section
             _buildBroadcastAlertSection(),
           ],
@@ -816,12 +813,12 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
       _showErrorMessage('Please select an incident first');
       return;
     }
-
+    
     final success = await _incidentService.updateIncidentStatus(
       incidentId: _selectedIncident!.id,
       status: 'on-scene',
     );
-
+    
     if (success) {
       _showSuccessMessage('Arrival confirmed!');
       _refreshData();
@@ -835,7 +832,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
       _showErrorMessage('Please select an incident first');
       return;
     }
-
+    
     // Create an alert for backup request
     final alertId = await _alertService.createAlert(
       title: 'Backup Requested',
@@ -843,7 +840,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
       type: 'warning',
       location: _selectedIncident!.location,
     );
-
+    
     if (alertId != null) {
       _showSuccessMessage('Backup requested!');
     } else {
@@ -856,7 +853,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
       _showErrorMessage('Please select an incident first');
       return;
     }
-
+    
     // Auto-assign if not already assigned
     if (_currentUser != null && (_selectedIncident!.assignedOfficer == null || _selectedIncident!.assignedOfficer!.isEmpty)) {
       await _incidentService.assignIncident(
@@ -864,12 +861,12 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
         officerId: _currentUser!.id,
       );
     }
-
+    
     final success = await _incidentService.updateIncidentStatus(
       incidentId: _selectedIncident!.id,
       status: 'resolved',
     );
-
+    
     if (success) {
       _showSuccessMessage('Incident marked as resolved!');
       _refreshData();
@@ -881,12 +878,12 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
 
   Future<void> _handleStatusChange(IncidentStatusType status) async {
     if (_selectedIncident == null) return;
-
+    
     final success = await _incidentService.updateIncidentStatus(
       incidentId: _selectedIncident!.id,
       status: status.name,
     );
-
+    
     if (success) {
       _showSuccessMessage('Status updated to ${status.name}');
       _refreshData();
@@ -961,7 +958,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
     final titleController = TextEditingController();
     final messageController = TextEditingController();
     String selectedType = 'warning';
-
+    
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -1011,19 +1008,19 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
         ],
       ),
     );
-
+    
     if (result == true && titleController.text.isNotEmpty && messageController.text.isNotEmpty) {
       final alertId = await _alertService.createAlert(
         title: titleController.text,
         message: messageController.text,
         type: selectedType,
       );
-
+      
       if (alertId != null && mounted) {
         _showSuccessMessage('Alert broadcasted successfully!');
       }
     }
-
+    
     titleController.dispose();
     messageController.dispose();
   }
@@ -1052,7 +1049,7 @@ class _EnhancedSecurityDashboardState extends State<EnhancedSecurityDashboard>
               ),
             ),
             const SizedBox(height: 20),
-
+            
             OfficerLocationShare(
               officerId: 'OFF-4567',
               onLocationShared: (position) {
