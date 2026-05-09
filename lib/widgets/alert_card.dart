@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../config/theme.dart';
 import '../models/alert.dart';
-// Student frontend update by Fadila Mohammed
 
-  // This widget is the root of your application.
 class AlertCard extends StatefulWidget {
   final Alert alert;
   final VoidCallback? onTap;

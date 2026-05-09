@@ -6,9 +6,7 @@ import '../config/theme.dart';
 class EmergencyButton extends StatefulWidget {
   final VoidCallback? onActivate;
   final VoidCallback? onCancel;
-// Student frontend update by Fadila Mohammed
 
-  // This widget is the root of your application.
   const EmergencyButton({
     super.key,
     this.onActivate,

@@ -6,9 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/theme.dart';
 import '../services/emergency_contact_service.dart';
 import '../services/personal_contact_service.dart';
-// Student frontend update by Fadila Mohammed
 
-  // This widget is the root of your application.
 class EmergencyContact {
   final String name;
   final String role;
