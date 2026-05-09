@@ -6,7 +6,7 @@ import '../../widgets/student_header.dart';
 import '../../widgets/emergency_button.dart';
 import '../../widgets/alert_card.dart';
 import 'incident_composer_screen.dart';
-
+//frontend
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
 

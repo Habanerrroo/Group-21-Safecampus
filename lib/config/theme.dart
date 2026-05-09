@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+//frontend
 class AppColors {
   // Primary: Deep Midnight Blue - security & trust
   static const Color primary = Color(0xFF0A0F1F);

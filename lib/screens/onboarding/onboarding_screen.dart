@@ -4,7 +4,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../config/theme.dart';
 import '../../services/storage_service.dart';
 import '../auth/login_screen.dart';
-
+//frontend
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
