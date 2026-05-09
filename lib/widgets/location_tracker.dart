@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import '../config/theme.dart';
+// Student frontend update by Fadila Mohammed
 
+  // This widget is the root of your application.
 class LocationTracker extends StatefulWidget {
   final Function(Position)? onLocationUpdate;
   final bool autoStart;
