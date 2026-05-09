@@ -231,3 +231,4 @@ class _ProgressRingPainter extends CustomPainter {
     return oldDelegate.progress != progress;
   }
 }
+

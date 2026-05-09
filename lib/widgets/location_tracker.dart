@@ -177,7 +177,7 @@ class _LocationTrackerState extends State<LocationTracker> {
                 ),
             ],
           ),
-
+          
           if (_currentPosition != null) ...[
             const SizedBox(height: 12),
             Container(

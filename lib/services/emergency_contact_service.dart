@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 
 class EmergencyContact {
   final String id;
@@ -21,13 +22,18 @@ class EmergencyContact {
 class EmergencyContactService {
   final _supabase = Supabase.instance.client;
 
+  // Get all active emergency contacts
   Future<List<EmergencyContact>> getEmergencyContacts() async {
+    developer.log('📞 FETCHING EMERGENCY CONTACTS', name: 'EmergencyContactService');
+
     try {
       final response = await _supabase
           .from('emergency_contacts')
           .select()
           .eq('is_active', true)
           .order('priority', ascending: false);
+
+      developer.log('✅ Fetched ${response.length} contacts', name: 'EmergencyContactService');
 
       return (response as List).map((contact) {
         return EmergencyContact(
@@ -40,7 +46,9 @@ class EmergencyContactService {
         );
       }).toList();
     } catch (e) {
+      developer.log('❌ Error fetching emergency contacts: $e', name: 'EmergencyContactService');
       return [];
     }
   }
 }
+

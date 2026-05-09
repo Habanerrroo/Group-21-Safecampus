@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 import '../models/incident.dart';
 
 class AIService {
@@ -6,6 +7,7 @@ class AIService {
 
   // AI-Powered Incident Prioritization
   Future<List<Map<String, dynamic>>> prioritizeIncidents(List<Incident> incidents) async {
+    developer.log('🤖 AI PRIORITIZING INCIDENTS', name: 'AIService');
 
     try {
       // Score each incident based on multiple factors
@@ -51,7 +53,7 @@ class AIService {
           final reportedAt = DateTime.parse(incident.reportedAt.split(' - ')[0]);
           final now = DateTime.now();
           final hoursSinceReport = now.difference(reportedAt).inHours;
-
+          
           if (hoursSinceReport < 1) {
             priorityScore += 20; // Very recent
           } else if (hoursSinceReport < 6) {
@@ -91,11 +93,13 @@ class AIService {
       }).toList();
 
       // Sort by priority score (highest first)
-      prioritized.sort((a, b) =>
-          (b['priorityScore'] as double).compareTo(a['priorityScore'] as double));
+      prioritized.sort((a, b) => 
+        (b['priorityScore'] as double).compareTo(a['priorityScore'] as double));
 
+      developer.log('✅ Incidents prioritized: ${prioritized.length}', name: 'AIService');
       return prioritized;
     } catch (e) {
+      developer.log('❌ Error prioritizing incidents: $e', name: 'AIService');
       return [];
     }
   }
@@ -109,6 +113,7 @@ class AIService {
 
   // AI-Powered Analytics and Insights
   Future<Map<String, dynamic>> generateInsights() async {
+    developer.log('🤖 GENERATING AI INSIGHTS', name: 'AIService');
 
     try {
       // Get recent incidents
@@ -126,8 +131,10 @@ class AIService {
         'riskAreas': _identifyRiskAreas(incidents),
       };
 
+      developer.log('✅ Insights generated', name: 'AIService');
       return insights;
     } catch (e) {
+      developer.log('❌ Error generating insights: $e', name: 'AIService');
       return {};
     }
   }
@@ -135,7 +142,7 @@ class AIService {
   // Identify incident hotspots
   Map<String, dynamic> _identifyHotspots(List<dynamic> incidents) {
     final locationCounts = <String, int>{};
-
+    
     for (final incident in incidents) {
       final location = incident['location'] as String? ?? 'Unknown';
       locationCounts[location] = (locationCounts[location] ?? 0) + 1;
@@ -163,7 +170,7 @@ class AIService {
     for (int i = 6; i >= 0; i--) {
       final dayStart = DateTime(now.year, now.month, now.day - i);
       final dayEnd = dayStart.add(const Duration(days: 1));
-
+      
       final dayCount = incidents.where((incident) {
         try {
           final createdAt = DateTime.parse(incident['created_at'] as String);
@@ -172,7 +179,7 @@ class AIService {
           return false;
         }
       }).length;
-
+      
       last7Days.add(dayCount);
     }
 
@@ -204,9 +211,9 @@ class AIService {
     final recommendations = <Map<String, dynamic>>[];
 
     // Analyze pending incidents
-    final pendingIncidents = incidents.where((i) =>
-    i['status'] == 'pending').length;
-
+    final pendingIncidents = incidents.where((i) => 
+      i['status'] == 'pending').length;
+    
     if (pendingIncidents > 5) {
       recommendations.add({
         'type': 'urgent',
@@ -284,11 +291,11 @@ class AIService {
   // Identify risk areas
   Map<String, dynamic> _identifyRiskAreas(List<dynamic> incidents) {
     final riskScores = <String, double>{};
-
+    
     for (final incident in incidents) {
       final location = incident['location'] as String? ?? 'Unknown';
       final severity = incident['severity'] as String? ?? 'medium';
-
+      
       double severityScore = 0;
       switch (severity) {
         case 'critical':
@@ -321,6 +328,7 @@ class AIService {
 
   // Predict incident likelihood (simple ML-like approach)
   Future<Map<String, dynamic>> predictIncidentLikelihood(String location) async {
+    developer.log('🤖 PREDICTING INCIDENT LIKELIHOOD', name: 'AIService');
 
     try {
       // Get historical incidents at this location
@@ -376,6 +384,7 @@ class AIService {
         'recentIncidents': recentCount,
       };
     } catch (e) {
+      developer.log('❌ Error predicting likelihood: $e', name: 'AIService');
       return {
         'location': location,
         'likelihood': 'unknown',
@@ -385,3 +394,4 @@ class AIService {
     }
   }
 }
+

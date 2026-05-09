@@ -20,7 +20,7 @@ class LocationPicker extends StatefulWidget {
 
 class _LocationPickerState extends State<LocationPicker> {
   String? _selectedLocation;
-
+  
   // Predefined campus locations
   final List<String> _locations = [
     // Blocks
